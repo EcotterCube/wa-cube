@@ -134,6 +134,26 @@ WA.onInit().then(() => {
         WA.room.area.onLeave("zoneShowroom").subscribe(() => {
             showShowroom();
         });
+
+
+
+        WA.room.area.onEnter("zoneShowStep1").subscribe(() => {
+            WA.room.showLayer("steps/step2");
+            WA.room.showLayer("steps/step2b");
+        });
+
+        WA.room.area.onEnter("zoneShowStep2").subscribe(() => {
+            WA.room.showLayer("steps/step3");
+        });
+
+        WA.room.area.onEnter("zoneShowStep3").subscribe(() => {
+            WA.room.showLayer("steps/step4");
+        });
+
+        WA.room.area.onEnter("zoneShowStep4").subscribe(() => {
+            WA.room.showLayer("steps/step5");
+        });
+
         const hasAuthorizedTag = authorizedTags.some(tag => userTags.includes(tag));
 
         if (!hasAuthorizedTag) { 
