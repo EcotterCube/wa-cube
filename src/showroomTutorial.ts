@@ -7,7 +7,7 @@
  * back to the player at the end.
  */
 
-import { openDialog } from "./dialog-box/api";
+import { openDialog } from "@workadventure/npc-dialog-box";
 
 const NPC_NAME = "Cubi";
 
@@ -108,6 +108,9 @@ export async function startShowroomTutorial(): Promise<void> {
         ],
         {
             name: NPC_NAME,
+            // Relative to the dialog page, i.e. served next to the map
+            // (see the npcDialogBox({ assets }) option in the Vite configs).
+            avatar: "npc-avatar.png",
             nextLabel: "Suivant",
             closeLabel: "Fermer",
         },

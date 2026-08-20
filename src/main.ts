@@ -1,7 +1,7 @@
 /// <reference types="@workadventure/iframe-api-typings" />
 
 import { bootstrapExtra } from "@workadventure/scripting-api-extra";
-import { closeDialog } from "./dialog-box/api";
+import { closeDialog } from "@workadventure/npc-dialog-box";
 import { startShowroomTutorial } from "./showroomTutorial";
 
 console.info('Script started successfully');

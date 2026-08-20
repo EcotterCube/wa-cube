@@ -3,6 +3,9 @@
   "version": "3.3.18",
   "license": "MIT",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "start": "npm run dev",
     "dev": "vite --config web.vite.config.ts",
@@ -26,6 +29,7 @@
   },
   "dependencies": {
     "@workadventure/map-starter-kit-core": "^1.1.5",
+    "@workadventure/npc-dialog-box": "^0.1.0",
     "@workadventure/scripting-api-extra": "^1.9.10"
   }
 }

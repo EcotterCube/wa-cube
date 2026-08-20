@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { defineConfig } from "vite";
 import { getMaps, getMapsOptimizers, getMapsScripts, LogLevel, OptimizeOptions } from "wa-map-optimizer-vite";
+import { npcDialogBox } from "@workadventure/npc-dialog-box/vite";
 
 const maps = getMaps();
 
@@ -27,12 +28,12 @@ export default defineConfig({
         sourcemap: true,
         rollupOptions: {
             input: {
-                npcDialog: "./npc-dialog.html",
                 ...getMapsScripts(maps),
             },
         },
     },
     plugins: [
+        npcDialogBox({ assets: ["npc-avatar.png"] }),
         ...getMapsOptimizers(maps, optimizerOptions),
     ],
 });
