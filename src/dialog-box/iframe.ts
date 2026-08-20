@@ -134,10 +134,8 @@ function render(data: DialogBoxData): void {
     };
     update();
 
-    // The whole dialog box is clickable, not just the button (clicks on the
-    // button bubble up to this same handler).
-    box.addEventListener("click", () => {
-        // First click while the text is still typing: reveal it instantly.
+    const performAction = () => {
+        // While the text is still typing: reveal it instantly.
         if (typingTimer !== null) {
             finishTyping();
             return;
@@ -150,6 +148,22 @@ function render(data: DialogBoxData): void {
             // The main script closes this iframe in reaction to this event.
             sendEvent({ type: "closed", ts: Date.now() });
         }
+    };
+
+    // The whole dialog box is clickable, not just the button (clicks on the
+    // button bubble up to this same handler).
+    box.addEventListener("click", performAction);
+
+    // Space acts like a click. Note: keys only reach this iframe once it has
+    // focus, i.e. after the player clicked the dialog box a first time.
+    document.addEventListener("keydown", (event) => {
+        if (event.code !== "Space" || event.repeat) {
+            return;
+        }
+        // Also suppresses scrolling and the focused button's own space
+        // activation, which would otherwise trigger performAction twice.
+        event.preventDefault();
+        performAction();
     });
 }
 
