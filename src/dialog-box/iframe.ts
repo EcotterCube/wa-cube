@@ -134,7 +134,9 @@ function render(data: DialogBoxData): void {
     };
     update();
 
-    button.addEventListener("click", () => {
+    // The whole dialog box is clickable, not just the button (clicks on the
+    // button bubble up to this same handler).
+    box.addEventListener("click", () => {
         // First click while the text is still typing: reveal it instantly.
         if (typingTimer !== null) {
             finishTyping();

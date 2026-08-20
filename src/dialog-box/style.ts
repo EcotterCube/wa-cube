@@ -40,6 +40,9 @@ body {
     border-radius: 8px;
     color: #ffffff;
     animation: dialog-box-appear 0.15s ease-out;
+    /* The whole box acts as the next/skip/close button. */
+    cursor: pointer;
+    user-select: none;
 }
 
 @keyframes dialog-box-appear {
