@@ -1,24 +1,25 @@
 # @workadventure/npc-dialog-box
 
-A reusable, video-game-like NPC dialog box for [WorkAdventure](https://workadventu.re) maps:
-a fixed iframe at the bottom of the screen displaying multi-step dialogs with a
-Zelda-like typewriter effect, an avatar and a next/close button. A click anywhere
-on the box (or the space key) reveals the rest of the text, advances to the next
-step, or closes the dialog.
+Embed a video-game-like NPC dialog box in your [WorkAdventure](https://workadventu.re) map.
 
-The dialog UI runs in its own iframe (a self-contained `npc-dialog.html` page
-shipped by this package); your map script drives it through the `openDialog()`
-API. The two sides communicate through local player variables.
+When your script opens a dialog, a box appears at the bottom of the screen with your
+NPC's avatar and name, and the text unfolds with a Zelda-like typewriter effect.
+A click anywhere on the box (or the space key) reveals the rest of the text, moves
+to the next step, or closes the dialog. Between steps, you can trigger any effect
+you like — pan the camera, play a sound...
 
-## Installation
+![An NPC dialog box at the bottom of a WorkAdventure map](./screenshot.png)
+
+## Usage
+
+Install the package:
 
 ```bash
 npm install @workadventure/npc-dialog-box
 ```
 
-Add the Vite plugin to your map project's Vite config(s) — for the
-map-starter-kit, both `web.vite.config.ts` (dev) and `buildmap.vite.config.ts`
-(build):
+Add the Vite plugin to your map project's Vite config(s) — for the map-starter-kit,
+both `web.vite.config.ts` and `buildmap.vite.config.ts`:
 
 ```ts
 import { npcDialogBox } from "@workadventure/npc-dialog-box/vite";
@@ -26,21 +27,16 @@ import { npcDialogBox } from "@workadventure/npc-dialog-box/vite";
 export default defineConfig({
     // ...
     plugins: [
-        npcDialogBox(),
+        npcDialogBox({ assets: ["npc-avatar.png"] }),
         // ...the other plugins (map optimizers, etc.)
     ],
 });
 ```
 
-The plugin serves `npc-dialog.html` on the dev server and emits it (same
-stable name) at the root of the build output, next to your optimized map.
-Extra static files such as an avatar image can be copied along:
+It makes the dialog page available next to your map, in dev and in your build,
+along with any extra files you list in `assets` (your avatar images, typically).
 
-```ts
-npcDialogBox({ assets: ["npc-avatar.png"] })
-```
-
-## Usage (map script)
+Then open dialogs from your map script:
 
 ```ts
 import { openDialog, closeDialog } from "@workadventure/npc-dialog-box";
@@ -51,24 +47,25 @@ WA.room.area.onEnter("myNpcZone").subscribe(() => {
             { text: "Hello, adventurer!" },
             {
                 text: "Look at this room on your right...",
-                // Runs in YOUR script when the step is displayed - move the
-                // camera, play a sound, whatever you like.
+                // Runs when the step is displayed - move the camera,
+                // play a sound, whatever you like.
                 onDisplay: () => WA.camera.set(1200, 800, 600, 400, true, true, 1000),
             },
-            { text: "Good luck!", onDisplay: () => WA.camera.followPlayer(true) },
+            { text: "Good luck!" },
         ],
         {
             name: "Robby",
-            avatar: "npc-avatar.png", // relative to the dialog page (map root)
+            avatar: "npc-avatar.png",
             nextLabel: "Next",
             closeLabel: "Bye",
         },
     ).then(() => {
-        // The dialog was closed (last step confirmed, or closeDialog() called).
+        // The dialog was closed.
         WA.camera.followPlayer(true);
     });
 });
 
+// Close the dialog when the player walks away
 WA.room.area.onLeave("myNpcZone").subscribe(() => {
     closeDialog();
 });
@@ -76,24 +73,10 @@ WA.room.area.onLeave("myNpcZone").subscribe(() => {
 
 `openDialog(steps, options)` resolves when the dialog closes. Options:
 
-| Option       | Default             | Description                                        |
-| ------------ | ------------------- | -------------------------------------------------- |
-| `name`       | –                   | NPC name displayed under the avatar                |
+| Option       | Default             | Description                                                 |
+| ------------ | ------------------- | ----------------------------------------------------------- |
+| `name`       | –                   | NPC name displayed under the avatar                         |
 | `avatar`     | –                   | Avatar image URL (absolute, or relative to the dialog page) |
-| `nextLabel`  | `"Next"`            | Label of the button while more steps remain        |
-| `closeLabel` | `"Close"`           | Label of the button on the last step               |
-| `dialogUrl`  | `"npc-dialog.html"` | URL of the dialog page, relative to the map file   |
-
-## Without the Vite plugin
-
-If your setup can't use the plugin, the self-contained dialog page is exported
-as `@workadventure/npc-dialog-box/npc-dialog.html` — copy it (and your avatar)
-next to your map file with the tool of your choice, or host it anywhere and
-point `dialogUrl` at it.
-
-## Development
-
-```bash
-npm install
-npm run build   # dist/api.js, dist/vite.js, dist/npc-dialog.html + .d.ts files
-```
+| `nextLabel`  | `"Next"`            | Label of the button while more steps remain                 |
+| `closeLabel` | `"Close"`           | Label of the button on the last step                        |
+| `dialogUrl`  | `"npc-dialog.html"` | URL of the dialog page, relative to the map file            |
