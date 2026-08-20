@@ -27,6 +27,7 @@ export default defineConfig({
         sourcemap: true,
         rollupOptions: {
             input: {
+                npcDialog: "./npc-dialog.html",
                 ...getMapsScripts(maps),
             },
         },
