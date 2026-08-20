@@ -19,6 +19,9 @@ import {
 } from "./types";
 import { DIALOG_BOX_CSS } from "./style";
 
+/** Delay between two characters of the typewriter effect. */
+const TYPEWRITER_INTERVAL_MS = 25;
+
 function sendEvent(event: DialogBoxEvent): void {
     WA.player.state
         .saveVariable(DIALOG_BOX_EVENT_VARIABLE, event, DIALOG_VARIABLE_OPTIONS)
@@ -62,6 +65,16 @@ function render(data: DialogBoxData): void {
     content.className = "content";
     const text = document.createElement("p");
     text.className = "text";
+    // The full step text is always in the DOM (revealed + hidden remainder),
+    // so the layout/line-wrapping never shifts while the typewriter runs.
+    // Both spans share one inline wrapper: .text is a flex container, and as
+    // direct flex items the two spans would not wrap as a single paragraph.
+    const textInner = document.createElement("span");
+    const revealed = document.createElement("span");
+    const pending = document.createElement("span");
+    pending.className = "text-pending";
+    textInner.append(revealed, pending);
+    text.append(textInner);
     const footer = document.createElement("div");
     footer.className = "footer";
     const counter = document.createElement("span");
@@ -73,10 +86,48 @@ function render(data: DialogBoxData): void {
     box.appendChild(content);
     document.body.appendChild(box);
 
+    // Zelda-like typewriter effect: the text appears character by character.
+    let chars: string[] = [];
+    let revealedCount = 0;
+    let typingTimer: number | null = null;
+
+    const applyReveal = () => {
+        revealed.textContent = chars.slice(0, revealedCount).join("");
+        pending.textContent = chars.slice(revealedCount).join("");
+    };
+
+    const stopTyping = () => {
+        if (typingTimer !== null) {
+            window.clearInterval(typingTimer);
+            typingTimer = null;
+        }
+    };
+
+    const finishTyping = () => {
+        stopTyping();
+        revealedCount = chars.length;
+        applyReveal();
+    };
+
+    const startTyping = (fullText: string) => {
+        stopTyping();
+        // Split into code points (not UTF-16 units) so no character is ever half-shown.
+        chars = Array.from(fullText);
+        revealedCount = 0;
+        applyReveal();
+        typingTimer = window.setInterval(() => {
+            revealedCount++;
+            applyReveal();
+            if (revealedCount >= chars.length) {
+                stopTyping();
+            }
+        }, TYPEWRITER_INTERVAL_MS);
+    };
+
     let stepIndex = 0;
     const update = () => {
         const isLastStep = stepIndex === data.steps.length - 1;
-        text.textContent = data.steps[stepIndex];
+        startTyping(data.steps[stepIndex]);
         counter.textContent = `${stepIndex + 1}/${data.steps.length}`;
         button.textContent = isLastStep ? data.closeLabel : data.nextLabel;
         button.classList.toggle("close", isLastStep);
@@ -84,6 +135,11 @@ function render(data: DialogBoxData): void {
     update();
 
     button.addEventListener("click", () => {
+        // First click while the text is still typing: reveal it instantly.
+        if (typingTimer !== null) {
+            finishTyping();
+            return;
+        }
         if (stepIndex < data.steps.length - 1) {
             stepIndex++;
             update();

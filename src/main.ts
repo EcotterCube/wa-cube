@@ -95,6 +95,7 @@ WA.onInit().then(() => {
                 allow: null,
                 allowApi: true,
                 position: "right",
+                closable: true,
                 allowFullScreen: false
             });
         }

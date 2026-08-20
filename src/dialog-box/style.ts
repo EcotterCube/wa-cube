@@ -94,6 +94,12 @@ body {
     align-items: center;
 }
 
+/* Not-yet-typed remainder of the text: takes up its final space (so the
+   line-wrapping never changes during the typewriter effect) but is invisible. */
+.text-pending {
+    visibility: hidden;
+}
+
 .footer {
     display: flex;
     align-items: center;
