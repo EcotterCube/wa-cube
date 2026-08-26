@@ -1,6 +1,8 @@
 /// <reference types="@workadventure/iframe-api-typings" />
 
 import { bootstrapExtra } from "@workadventure/scripting-api-extra";
+import { closeDialog } from "@workadventure/npc-dialog-box";
+import { startShowroomTutorial } from "./showroomTutorial";
 
 console.info('Script started successfully');
 
@@ -93,6 +95,7 @@ WA.onInit().then(() => {
                 allow: null,
                 allowApi: true,
                 position: "right",
+                closable: true,
                 allowFullScreen: false
             });
         }
@@ -140,6 +143,13 @@ WA.onInit().then(() => {
         WA.room.area.onEnter("zoneShowStep1").subscribe(() => {
             WA.room.showLayer("steps/step2");
             WA.room.showLayer("steps/step2b");
+            WA.controls.disablePlayerProximityMeeting();
+            startShowroomTutorial().catch(e => console.error(e));
+        });
+
+        WA.room.area.onLeave("zoneShowStep1").subscribe(() => {
+            WA.controls.restorePlayerProximityMeeting();
+            closeDialog().catch(e => console.error(e));
         });
 
         WA.room.area.onEnter("zoneShowStep2").subscribe(() => {
