@@ -91,7 +91,7 @@ WA.onInit().then(() => {
         callback: () => {
             WA.ui.modal.openModal({
                 title: "Navigation",
-                src: "https://workadventu.re/campus.html",
+                src: "./campus.html",
                 allow: null,
                 allowApi: true,
                 position: "right",

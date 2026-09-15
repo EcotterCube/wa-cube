@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plan du Campus — Map Overview</title>
+
+<!-- Polices -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- API Workadventure -->
+<script src="https://play.workadventu.re/iframe_api.js"></script>
+
+<!-- Styles -->
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="shell">
+
+  <!-- Filtres : un bouton par zone -->
+  <nav class="filters fade-in delay-1" aria-label="Filtrer par zone">
+    <button class="filter" data-zone="staff"    style="--c: var(--c-staff)"><span class="dot"></span>Staff</button>
+    <button class="filter" data-zone="campus"   style="--c: var(--c-campus)"><span class="dot"></span>Campus</button>
+    <button class="filter" data-zone="showroom" style="--c: var(--c-showroom)"><span class="dot"></span>Showroom</button>
+    <button class="filter" data-zone="event"    style="--c: var(--c-event)"><span class="dot"></span>Événement</button>
+    <button class="filter" data-zone="entry"    style="--c: var(--c-entry)"><span class="dot"></span>Entrée</button>
+  </nav>
+
+  <!-- Carte : image de fond + hotspots positionnés en % -->
+  <section class="map-wrap fade-in delay-2" aria-label="Carte du campus">
+    <div class="map-head">
+      <div class="title">
+        <span class="icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3-6-3z"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>
+        </span>
+        Vue aérienne du Campus
+      </div>
+      <div class="meta">5 zones · cliquables</div>
+    </div>
+
+    <div class="map" id="map">
+      <!-- Image de fond (pour remplacer : changez le src ci-dessous) -->
+      <img class="map-bg" src="./campus.png" alt="Vue aérienne du campus" />
+
+      <!-- Zones cliquables. left/top/width/height en %, --c = couleur de zone -->
+      <div class="hotspots">
+        <button class="hotspot" data-zone="staff"    style="left:3%;  top:14%; width:13%; height:37%; --c: var(--c-staff)"    aria-label="Zone Staff">
+          <span class="shape" aria-hidden="true"></span>
+          <span class="label"><span class="ldot"></span>Staff</span>
+        </button>
+        <button class="hotspot" data-zone="campus"   style="left:20%; top:3%;  width:59%; height:60%; --c: var(--c-campus)"   aria-label="Zone Campus">
+          <span class="shape" aria-hidden="true"></span>
+          <span class="label"><span class="ldot"></span>Campus</span>
+        </button>
+        <button class="hotspot" data-zone="showroom" style="left:1%;  top:66%; width:22%; height:22%; --c: var(--c-showroom)" aria-label="Zone Showroom">
+          <span class="shape" aria-hidden="true"></span>
+          <span class="label"><span class="ldot"></span>Showroom</span>
+        </button>
+        <button class="hotspot" data-zone="event"    style="left:67%; top:61%; width:14%; height:27%; --c: var(--c-event)"    aria-label="Zone Événement">
+          <span class="shape" aria-hidden="true"></span>
+          <span class="label"><span class="ldot"></span>Événement</span>
+        </button>
+        <button class="hotspot" data-zone="entry"    style="left:43%; top:92%; width:6%;  height:8%;  --c: var(--c-entry)"    aria-label="Zone Entrée">
+          <span class="shape" aria-hidden="true"></span>
+          <span class="label"><span class="ldot"></span>Entrée</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Légende : carrousel de cartes (générées par app.js) -->
+  <div class="legend-wrap fade-in delay-3">
+    <button class="carousel-btn prev" id="legendPrev" aria-label="Précédent">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <section class="legend" id="legend" aria-label="Légende des zones"></section>
+    <button class="carousel-btn next" id="legendNext" aria-label="Suivant">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+
+</div>
+
+<!-- Footer fixe -->
+<footer class="footer">
+  <button class="btn btn-primary" id="closeBtn">
+    Fermer le plan
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+  </button>
+</footer>
+
+<!-- Panneau de détails (rempli par app.js au clic d'une zone) -->
+<aside class="detail" id="detail" aria-live="polite">
+  <button class="close" id="detailClose" aria-label="Fermer">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+  </button>
+  <div class="top">
+    <div class="ico" id="dIco"></div>
+    <div>
+      <div class="sub" id="dSub">Zone</div>
+      <h4 id="dTitle">Nom</h4>
+    </div>
+  </div>
+  <p id="dDesc">Description</p>
+  <div class="row">
+    <button class="btn btn-tp" id="dTp">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      Aller jusqu'à
+    </button>
+    <button class="btn btn-ghost" id="dDismiss">Fermer</button>
+  </div>
+</aside>
+
+<!-- Logique -->
+<script src="app.js"></script>
+</body>
+</html>
