@@ -91,7 +91,7 @@ WA.onInit().then(() => {
         callback: () => {
             WA.ui.modal.openModal({
                 title: "Navigation",
-                src: "./campus.html",
+                src: "https://ecole-34139.map-storage.workadventu.re/cube/campus.html",
                 allow: null,
                 allowApi: true,
                 position: "right",
