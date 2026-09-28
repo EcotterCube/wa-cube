@@ -94,7 +94,7 @@ WA.onInit().then(() => {
                 src: "https://campus-entry-cube.lovable.app/plan-aide",
                 allow: null,
                 allowApi: true,
-                position: "right",
+                position: "center",
                 closable: true,
                 allowFullScreen: false
             });
